@@ -7,7 +7,8 @@ var addButton = document.getElementById("add-button");
 addButton.addEventListener("click", addToDoItem);
 // temporary add function
 function addToDoItem() {
-  alert("Add button clicked!");
+  var itemText = toDoEntryBox.value;
+  newToDoItem(itemText, false);
 }
 
 /*
@@ -44,4 +45,32 @@ saveListButton.addEventListener("click", saveList);
 // temp save list function
 function saveList() {
   alert("Save List button clicked!");
+}
+
+/*
+  LIST ITEMS
+*/
+// get the entry box and the list of items
+var toDoEntryBox = document.getElementById("todo-entry-box");
+var toDoList = document.getElementById("todo-list");
+// create a new item on the list
+// this item may be completed if we're loading from a saved list
+function newToDoItem(itemText, completed) {
+  // create a new li element for the HTML list
+  var toDoItem = document.createElement("li");
+  // create a text node of "itemText" that's passed in
+  var toDoText = document.createTextNode(itemText);
+  // append the text node in the li toDoItem
+  toDoItem.appendChild(toDoText);
+  // if the item was marked as completed
+  if (completed) {
+    // then add the "completed" class to the li item
+    // the class is used in the CSS file to change the appearance
+    toDoItem.classList.add("completed");
+  }
+  // put the li (list item) element in the ol (ordered list) element
+  toDoList.appendChild(toDoItem);
+  // add a listener so that when the item is double-clicked,
+  // it gets marked as completed
+  toDoItem.addEventListener("dblclick", toggleToDoItemState);
 }
