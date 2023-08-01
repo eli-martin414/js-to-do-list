@@ -18,9 +18,15 @@ function addToDoItem() {
 var clearCompletedButton = document.getElementById("clear-completed-button");
 // listen for the "clear completed" button to be clicked, and run the function to clear an item
 clearCompletedButton.addEventListener("click", clearCompletedToDoItems)
-// temporary clear function
+// clear any completed items
 function clearCompletedToDoItems() {
-  alert("Clear Completed button clicked!");
+  // get all elements from "toDoList" that are part of the class "completed"
+  var completedItems = toDoList.getElementsByClassName("completed");
+  
+  // loop through these items and remove them one by one
+  while (completedItems.length > 0) {
+    completedItems.item(0).remove();
+  }
 }
 
 /*
@@ -30,9 +36,13 @@ function clearCompletedToDoItems() {
 var emptyListButton = document.getElementById("empty-button")
 // listen for the "empy list" button to be clicked, and run the function to empty the list
 emptyListButton.addEventListener("click", emptyList);
-// temporary empty list function
+// empty the list by removing all items from toDoList
 function emptyList() {
-  alert("Empty List button clicked!");
+  // get all the children
+  var toDoItems = toDoList.children;
+  while (toDoItems.length > 0) {
+    toDoItems.item(0).remove();
+  }
 }
 
 /*
@@ -74,3 +84,49 @@ function newToDoItem(itemText, completed) {
   // it gets marked as completed
   toDoItem.addEventListener("dblclick", toggleToDoItemState);
 }
+
+// toggle the item from done to undone, or vice versa
+// we will call this function on a todo item, which will be "this"
+// we want to either add "completed" to its list of HTML classes or remove it
+function toggleToDoItemState() {
+  if (this.classList.contains("completed")) {
+    this.classList.remove("completed");
+  } else {
+    this.classList.add("completed");
+  }
+}
+
+// save the list
+function saveList() {
+  // create an array to save each item as an object
+  var toDos = [];
+  // for each item
+  for (var i = 0; i < toDoList.children.length; i++) {
+    // create a variable for the item itself
+    var toDo = toDoList.children.item(i);
+    // then create an object to store both its name and its completion
+    var toDoInfo = {
+      "task": toDo.innerText,
+      "completed": toDo.classList.contains("completed") // true or false
+    };
+    // finally push that object into the array
+    localStorage.setItem("toDos", JSON.stringify(toDos));
+  }
+}
+
+// load the list, if it exists
+function loadList() {
+  // if the list exists in local storage
+  if (localStorage.getItem("toDos") != null) {
+    // get all the items out of storage
+    var toDos = JSON.parse(localStorage.getItem("toDos"));
+        // for each item
+        for (var i = 0; i < toDos.length; i++) {
+            // create it as a new todo item
+            var toDo = toDos[i];
+            newToDoItem(toDo.task, toDo.completed);
+        }
+  }
+}
+// load any time the page opens
+loadList();
